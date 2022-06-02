@@ -1,35 +1,65 @@
-# set up environment
-import json
-import nibabel as nib
-import dipy
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jun  1 17:33:48 2022
 
-from dipy.align.reslice import reslice
-from dipy.data import get_fnames
+@author: dan
+"""
+
+
+import os
+import sys
+
+sys.path.append('wma_pyTools')
+startDir=os.getcwd()
+#some how set a path to wma pyTools repo directory
+#wmaToolsDir='wma_pyTools'
+#wmaToolsDir='..'
+#os.chdir(wmaToolsDir)
+print(os.getcwd())
+print(os.listdir())
+import wmaPyTools.roiTools
+import wmaPyTools.analysisTools
+import wmaPyTools.segmentationTools
+import wmaPyTools.streamlineTools
+import wmaPyTools.visTools
+import wmaPyTools.genUtils
+
+#os.chdir(startDir)
+
+import os
+import json
+import numpy as np
+import nibabel as nib
+import pandas as pd
+
 
 # load inputs from config.json
 with open('config.json') as config_json:
 	config = json.load(config_json)
 
-# Load into variables predefined code inputs
-data_file = str(config['t1'])
- 
-# set the output resolution
-out_res = [ int(v) for v in config['outres'].split(" ")]
+outDirParc='output_parc'
+if not os.path.exists(outDirParc):
+    os.makedirs(outDirParc)
 
-# we load the input T1w that we would like to resample
-img = nib.load(data_file)
+outIslandDirCSV='output_islandcsv'
+if not os.path.exists(outIslandDirCSV):
+    os.makedirs(outIslandDirCSV)
+    
+outInflateDirCSV='output_inflatecsv'
+if not os.path.exists(outInflateDirCSV):
+    os.makedirs(outInflateDirCSV)
 
-# we get the data from the nifti file
-input_data   = img.get_data()
-input_affine = img.affine
-input_zooms  = img.header.get_zooms()[:3]
+parcIn=nib.load(config['parc'])
+inflateParam=config['inflate']
+#inferWMParam=config['inferWM']
+retainOrigBorders=config['retainOrigBorders']
+maintainIslandsLabels=config['maintainIslandsLabels']
+erodeLabels=config['erodeLabels']
 
-# resample the data
-out_data, out_affine = reslice(input_data, input_affine, input_zooms, out_res)
+outParc,deIslandReport,inflationReport=wmaPyTools.roiTools.preProcParc(parcIn,deIslandBool=True,inflateIter=inflateParam,retainOrigBorders=retainOrigBorders,maintainIslandsLabels=maintainIslandsLabels,erodeLabels=erodeLabels)
 
-# create the new NIFTI file for the output
-out_img = nib.Nifti1Image(out_data, out_affine)
+nib.save(outParc,os.path.join(outDirParc,'parc.nii.gz'))
 
-# save the output file (with the new resolution) to disk
-nib.save(out_img, 'out_dir/t1.nii.gz')
-
+deIslandReport.to_csv(os.path.join(outIslandDirCSV,'de-island_report.csv'))
+inflationReport.to_csv(os.path.join(outInflateDirCSV,'inflate_report.csv'))
