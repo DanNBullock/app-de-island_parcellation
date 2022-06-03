@@ -51,13 +51,20 @@ if not os.path.exists(outInflateDirCSV):
     os.makedirs(outInflateDirCSV)
 
 parcIn=nib.load(config['parc'])
+deIslandBool=config['deisland']
 inflateParam=config['inflate']
 #inferWMParam=config['inferWM']
 retainOrigBorders=config['retainOrigBorders']
 maintainIslandsLabels=config['maintainIslandsLabels']
+#check case for empty input
+if maintainIslandsLabels == '':
+    maintainIslandsLabels=[]
 erodeLabels=config['erodeLabels']
+#check case for empty input
+if erodeLabels == '':
+    erodeLabels=[]
 
-outParc,deIslandReport,inflationReport=wmaPyTools.roiTools.preProcParc(parcIn,deIslandBool=True,inflateIter=inflateParam,retainOrigBorders=retainOrigBorders,maintainIslandsLabels=maintainIslandsLabels,erodeLabels=erodeLabels)
+outParc,deIslandReport,inflationReport=wmaPyTools.roiTools.preProcParc(parcIn,deIslandBool=deIslandBool,inflateIter=inflateParam,retainOrigBorders=retainOrigBorders,maintainIslandsLabels=maintainIslandsLabels,erodeLabels=erodeLabels)
 
 nib.save(outParc,os.path.join(outDirParc,'parc.nii.gz'))
 

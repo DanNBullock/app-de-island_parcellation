@@ -1,4 +1,8 @@
 {
-    "t1": "t1.nii.gz",
-    "outres": "1 1 1"
+    "parc": "testdata/parc.nii.gz",
+    "inflate": 1,
+    "retainOrigBorders": false,
+    "deisland": true,
+    "maintainIslandsLabels": "",
+    "erodeLabels": ""
 }
