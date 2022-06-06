@@ -68,5 +68,5 @@ outParc,deIslandReport,inflationReport=wmaPyTools.roiTools.preProcParc(parcIn,de
 
 nib.save(outParc,os.path.join(outDirParc,'parc.nii.gz'))
 
-deIslandReport.to_csv(os.path.join(outIslandDirCSV,'de-island_report.csv'))
-inflationReport.to_csv(os.path.join(outInflateDirCSV,'inflate_report.csv'))
+deIslandReport.to_csv(os.path.join(outIslandDirCSV,'parc-stats','de-island_report.csv'))
+inflationReport.to_csv(os.path.join(outInflateDirCSV,'parc-stats','inflate_report.csv'))
