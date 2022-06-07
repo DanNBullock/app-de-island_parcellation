@@ -32,7 +32,7 @@ import json
 import numpy as np
 import nibabel as nib
 import pandas as pd
-
+import shutil
 
 # load inputs from config.json
 with open('config.json') as config_json:
@@ -67,7 +67,7 @@ if erodeLabels == '':
 outParc,deIslandReport,inflationReport=wmaPyTools.roiTools.preProcParc(parcIn,deIslandBool=deIslandBool,inflateIter=inflateParam,retainOrigBorders=retainOrigBorders,maintainIslandsLabels=maintainIslandsLabels,erodeLabels=erodeLabels)
 
 nib.save(outParc,os.path.join(outDirParc,'parc.nii.gz'))
-
+shutil.copyfile(config['label'], os.path.join(outDirParc,'label.json'))
 
 outDirParcStats='parc-stats'
 if not os.path.exists(os.path.join(outIslandDirCSV,outDirParcStats)):
