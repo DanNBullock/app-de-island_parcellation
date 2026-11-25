@@ -3,6 +3,49 @@
 
 # [app name]
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Remove islands (unconnected components) from and/or inflate a given volumetric parcellation.**
+
+Uses wmaPyTools to remove disconnected islands from each label and/or inflate labels voxel-wise for a set number of iterations, optionally keeping the original borders, and writes CSV reports of both steps. Use it to clean a volumetric parcellation before using it for ROIs or connectomes. Needs a parcellation with its label.json.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/parcellation/volume` |
+| 📤 **Outputs** | `neuro/parcellation/volume` · `neuro/parc-stats` ×2 |
+| 🐳 **Container** | `brainlife/dipy:latest` |
+| ⚙️ **Resources** | 16 CPUs |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.639](https://doi.org/10.25663/brainlife.app.639) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `parc` | `neuro/parcellation/volume` | yes | Volumetric parcellation with key and label.json. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `output_parc` | `neuro/parcellation/volume` | The post-processed parcellation |
+| `output_islandcsv` | `neuro/parc-stats` | A report detailing the effects of the de-islanding process |
+| `output_inflatecsv` | `neuro/parc-stats` | A report detailing the effects of the inflation process |
+
+<details>
+<summary><b>⚙️ Parameters</b> (5)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `inflate` | number | `0` | The number of inflation iterations to perform. Proceeds voxel-wise (rather than mm-space). Integer values ONLY! |
+| `retainOrigBorders` | boolean | `false` | Whether to retain the original borders of the input parcellation. This essentially negates any inflation performed, other than filling in islands removed by the de-islanding process. |
+| `deisland` | boolean | `true` | Remove "islands" from the parcellation. "Islands" in this context, are sub-components of labels which are disconnected from the primary connected mask associated with those labels. For example, label 100 in a parcellation could be divided into two components, one with 1 voxel and one with 100. This process would set the label for the 1 voxel component to 0 (thereby erasing it). |
+| `maintainIslandsLabels` | string |  | Which labels should be "skipped" for the de-islanding process. Thus, for these labels, islands will be unmodified, should they exist. |
+| `erodeLabels` | string |  | Which labels should be treated as background (0) for the inflation process. Thus, for these labels, it will be possible for adjacent labels to expand into these areas. Surviving labeling for these labels will be retained after the inflation process. |
+
+</details>
+
+<!-- brainlife-app:end -->
+
 ## Overview description
 
 This is where the description of the app goes.  Provide quick summaries of:
